@@ -30,21 +30,4 @@ def add_item(body_data: ItemPayload) -> float:
     return success_rate
 
 
-    if not redis_client.hexists(f"item_id:{item_id}", "item_id"):
-        raise HTTPException(status_code=404, detail="Item not found.")
-
-    item_quantity: str | None = redis_client.hget(f"item_id:{item_id}", "quantity")
-
-    # if quantity to be removed is higher or equal to item's quantity, delete the item
-    if item_quantity is None:
-        existing_quantity: int = 0
-    else:
-        existing_quantity: int = int(item_quantity)
-    if existing_quantity <= quantity:
-        item_name: str | None = redis_client.hget(f"item_id:{item_id}", "item_name")
-        redis_client.hdel("item_name_to_id", f"{item_name}")
-        redis_client.delete(f"item_id:{item_id}")
-        return {"result": "Item deleted."}
-    else:
-        redis_client.hincrby(f"item_id:{item_id}", "quantity", -quantity)
-        return {"result": f"{quantity} items removed."}
+   
