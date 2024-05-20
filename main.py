@@ -1,13 +1,22 @@
 import joblib
 import pandas as pd
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 rf_model = joblib.load("random_forest_model.joblib")
 
 from models import ItemPayload
 
 app = FastAPI()
 
+origins = ["*"]
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 # Route to find success rate
 @app.post("/evals/")
